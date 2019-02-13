@@ -6,8 +6,19 @@ import (
 	"net/http"
 )
 
+// Book struct ( Model )
+type Books struct {
+	ID     string  `json:"id"`
+	Isbn   string  `json:"isbn"`
+	Title  string  `json:"title"`
+	Author *Author `json:"author"`
+}
 
-
+// Author struct ( Model )
+type Author struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+}
 
 func main() {
 	// Init router
