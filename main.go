@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"log"
 	"math/rand"
@@ -55,8 +54,7 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 func createBooks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "Application/json")
 	var book Book
-	fmt.Println(json.NewDecoder(r.Body).Decode(&book))
-	_ = json.NewDecoder(r.Body).Decode(&books)
+	_ = json.NewDecoder(r.Body).Decode(&book)
 	book.ID = strconv.Itoa(rand.Intn(1000000))
 	books = append(books, book)
 	json.NewEncoder(w).Encode(book)
@@ -65,12 +63,34 @@ func createBooks(w http.ResponseWriter, r *http.Request) {
 
 // Update a single book
 func updateBooks(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "Application/json")
+	params:= mux.Vars(r)
+	for index, item := range books {
+		if item.ID == params["id"] {
+			books = append(books[:index], books[index+1:]...)
+			var book Book
+			_ = json.NewDecoder(r.Body).Decode(&book)
+			book.ID = params["id"]
+			books = append(books, book)
+			json.NewEncoder(w).Encode(book)
+			return
+		}
+	}
+	json.NewEncoder(w).Encode(books)
 
 }
 
 // Delete a single book
 func deleteBooks(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Content-Type", "Application/json")
+	params := mux.Vars(r)
+	for index, item := range books {
+		if item.ID == params["id"] {
+			books = append(books[:index], books[index+1:]...)
+			break
+		}
+	}
+	json.NewEncoder(w).Encode(books)
 }
 
 func main() {
